@@ -117,7 +117,6 @@ class MainActivity : AppCompatActivity() {
                     ), 1
                 )
             }
-
         }
 
         updateView()
