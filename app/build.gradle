@@ -68,7 +68,9 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.4.0')
     implementation 'com.google.firebase:firebase-messaging-ktx:23.3.1'
 
-    implementation files('libs/SDKVBot-release.aar')
 
 //    api fileTree(dir: 'libs', include: ['*.aar'])
+    implementation files('libs/SDKVBot-release.aar')
+
+
 }

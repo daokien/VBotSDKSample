@@ -157,7 +157,6 @@ class CallActivity : AppCompatActivity() {
         binding.btnMic.text = "Mic: $ismic"
     }
 
-    @SuppressLint("SetTextI18n")
     private fun speakUpdate(enable: Boolean) {
         speak = enable
         isSpeak(enable)

@@ -17,14 +17,18 @@ import com.vpmedia.sdkvbot.domain.pojo.mo.Hotline
 import com.vpmedia.sdkvbot.en.AccountRegistrationState
 import com.vpmedia.sdkvbot.en.CallState
 import com.vpmedia.vbotsdksample.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
 
     private lateinit var binding: ActivityMainBinding
-    private var listener = object : ClientListener(), ChooseHotline.ListenerBottomSheet {
+    private var listener = object : ClientListener() {
         override fun onAccountRegistrationState(status: AccountRegistrationState, reason: String) {
             updateView()
         }
@@ -49,18 +53,6 @@ class MainActivity : AppCompatActivity() {
             ).show()
         }
 
-        override fun onListHotline(listHotline: List<Hotline>) {
-            val chooseHotlineCallBottomSheet = ChooseHotline()
-            chooseHotlineCallBottomSheet.show(
-                supportFragmentManager, "chooseHotlineCallBottomSheet"
-            )
-            chooseHotlineCallBottomSheet.setListener(this, listHotline)
-            super.onListHotline(listHotline)
-        }
-
-        override fun onClickHotline(hotline: Hotline) {
-            binding.etHotline.setText(hotline.phoneNumber)
-        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -93,7 +85,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnSelectHotline.setOnClickListener {
-            MyApplication.client.getListHotline()
+            CoroutineScope(Dispatchers.IO).launch {
+                runBlocking {
+                    val list = MyApplication.client.getListHotline()
+                    if (list!=null){
+                        val chooseHotlineCallBottomSheet = ChooseHotline()
+                        chooseHotlineCallBottomSheet.show(
+                            supportFragmentManager, "chooseHotlineCallBottomSheet"
+                        )
+                        chooseHotlineCallBottomSheet.setListener(this@MainActivity, list)
+                    }
+                }
+            }
         }
 
 
@@ -204,5 +207,9 @@ class MainActivity : AppCompatActivity() {
         )
         intent.putExtra("extra_pkgname", context.packageName)
         context.startActivity(intent)
+    }
+
+    override fun onClickHotline(hotline: Hotline) {
+        binding.etHotline.setText(hotline.phoneNumber)
     }
 }

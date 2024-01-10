@@ -34,3 +34,4 @@
 -keep class com.vpmedia.sdkvbot.** {*;}
 -keep class org.pjsip.pjsua2.** {*;}
 -keep class io.reactivex.** {*;}
+-keep class retrofit2.** {*;}
