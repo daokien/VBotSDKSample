@@ -19,6 +19,7 @@ import kotlin.random.Random
 class FirebaseService : FirebaseMessagingService() {
 
 
+    //nhận notify
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         val hashMap = HashMap<String, String>()
         for (key in remoteMessage.data.keys) {
@@ -68,6 +69,8 @@ class FirebaseService : FirebaseMessagingService() {
         super.onNewToken(token)
     }
 
+
+    //tạo notify trên điện thoại
     private fun sendNotification(title: String, message: String) {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

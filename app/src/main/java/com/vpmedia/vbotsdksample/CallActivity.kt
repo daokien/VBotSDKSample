@@ -24,11 +24,12 @@ class CallActivity : AppCompatActivity() {
     private var hold = false
 
     private var listener = object : ClientListener() {
-
+        //lắng nghe trạng thái cuộc gọi
         override fun onCallState(state: CallState) {
             MyApplication.state = state
             when (state) {
                 CallState.Incoming -> {
+
                     micUpdate(ismic)
                 }
 
@@ -59,6 +60,8 @@ class CallActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCallBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //hiển thị màn hình khí bị khoá
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
@@ -70,14 +73,17 @@ class CallActivity : AppCompatActivity() {
         MyApplication.client.startClient()
         MyApplication.client.addListener(listener)
 
+        //click button mic
         binding.btnMic.setOnClickListener {
             if (MyApplication.client.isCall()) {
                 micUpdate(!ismic)
             }
         }
+        //click button speak
         binding.btnSpeak.setOnClickListener {
             speakUpdate(!speak)
         }
+        //click button answer
         binding.btnAnswer.setOnClickListener {
             MyApplication.client.checkAndStopLocalRingBackTone()
             bAnswer = true
@@ -86,6 +92,7 @@ class CallActivity : AppCompatActivity() {
             if (MyApplication.client.isCall()) {
                 MyApplication.client.answerIncomingCall()
             } else {
+                //chưa có call -> chờ có call để kết nối
                 Thread {
                     try {
                         while (!MyApplication.client.isCall()) {
@@ -110,17 +117,21 @@ class CallActivity : AppCompatActivity() {
                 }.start()
             }
         }
+        //click button hold
         binding.btnHold.setOnClickListener {
             hold = !hold
             MyApplication.client.setHold(hold)
         }
+        //click button decline
         binding.btnDecline.setOnClickListener {
             MyApplication.client.declineIncomingCall(true)
         }
+        //click button hangup
         binding.btnHangUp.setOnClickListener {
             MyApplication.client.hangupCall()
         }
 
+        //khởi tạo audio manager
         audioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         if (MyApplication.state == CallState.Outgoing) {
@@ -151,18 +162,21 @@ class CallActivity : AppCompatActivity() {
 
     }
 
+    //update mic
     private fun micUpdate(enable: Boolean) {
         ismic = enable
         MyApplication.client.isMic(ismic)
         binding.btnMic.text = "Mic: $ismic"
     }
 
+    //update speak
     private fun speakUpdate(enable: Boolean) {
         speak = enable
         isSpeak(enable)
         binding.btnSpeak.text = "Speak: $speak"
     }
 
+    //bật tắt loa
     private fun isSpeak(enable: Boolean) {
         if (enable) {
             audioManager?.mode = AudioManager.MODE_IN_CALL
@@ -172,6 +186,7 @@ class CallActivity : AppCompatActivity() {
         audioManager?.isSpeakerphoneOn = enable
     }
 
+    //đếm giây
     private fun startTime() {
         if (MyApplication.client.isCall()) {
             val duration = if (MyApplication.client.getDuration() != null) {
@@ -184,6 +199,7 @@ class CallActivity : AppCompatActivity() {
         }
     }
 
+    //tắt màn hình call
     private fun destroy() {
         bAnswer = false
         MyApplication.client.checkAndStopLocalRingBackTone()

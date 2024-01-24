@@ -15,10 +15,12 @@ class MyApplication : Application() {
         var state: CallState = CallState.Null
         lateinit var tokenFirebase: String
 
+        // kiểm tra khởi tạo VBotClient
         fun clientExists(): Boolean {
             return ::client.isInitialized
         }
 
+        //Khởi tạo VBotClient
         fun initClient(context: Context) {
             if (clientExists() && client.clientIsStart()) {
                 Log.d("LogApp", "Skipping Client creation")
@@ -31,6 +33,7 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        //Lấy firebase Token
         getTokenFirebase()
     }
 

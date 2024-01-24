@@ -14,10 +14,11 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
 
     private var listener = object : ClientListener() {
+        //Lắng nghe trạng thái Account register
         override fun onAccountRegistrationState(status: AccountRegistrationState, reason: String) {
             loginState(status)
         }
-
+        //Lắng nghe lỗi
         override fun onErrorCode(erCode: Int, message: String) {
             super.onErrorCode(erCode, message)
             binding.tvStatus.text = "Error: $erCode -- $message"
@@ -32,6 +33,7 @@ class LoginActivity : AppCompatActivity() {
         MyApplication.initClient(this)
         MyApplication.client.addListener(listener)
 
+        //click button login
         binding.btnLogin.setOnClickListener {
             val token = binding.etToken.text.toString().trim()
             when {
@@ -45,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-
+        //start vbot client
         MyApplication.client.startClient()
     }
 
@@ -58,6 +60,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    //check state register account
     private fun loginState(state: AccountRegistrationState) {
         Log.d("LogApp", "state=$state")
 
@@ -65,6 +68,7 @@ class LoginActivity : AppCompatActivity() {
             AccountRegistrationState.Ok -> {
                 binding.tvStatus.text = "Done"
                 MyApplication.client.removeListener(listener)
+                //chuyển màn hình main
                 startActivity(Intent(this, MainActivity::class.java))
                 finishAffinity()
             }

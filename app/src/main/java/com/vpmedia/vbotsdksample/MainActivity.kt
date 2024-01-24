@@ -28,12 +28,16 @@ import java.io.InputStreamReader
 class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
 
     private lateinit var binding: ActivityMainBinding
+
     private var listener = object : ClientListener() {
+        //Lắng nghe trạng thái Account register
         override fun onAccountRegistrationState(status: AccountRegistrationState, reason: String) {
             updateView()
         }
 
+        //Lắng nghe trạng thái cuộc gọi
         override fun onCallState(state: CallState) {
+            //call đến mở màn hình call
             if (state == CallState.Outgoing) {
                 MyApplication.state = state
                 startActivity(
@@ -44,6 +48,7 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
             }
         }
 
+        //Lắng nghe lỗi
         override fun onErrorCode(erCode: Int, message: String) {
             super.onErrorCode(erCode, message)
             Toast.makeText(
@@ -60,31 +65,43 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        //khởi tạo
         MyApplication.initClient(this)
+        //add listener
         MyApplication.client.addListener(listener)
 
+        //click button stop client
         binding.btnStop.setOnClickListener {
+            ////stop client và unregister account
             MyApplication.client.stopClient()
+            //đóng ứng dụng
             finishAffinity()
         }
 
+        //click button logout
         binding.btnLogout.setOnClickListener {
             MyApplication.client.stopClient()
+            //logout
             MyApplication.client.logout()
+            //bật màn hình login
             startActivity(Intent(this, LoginActivity::class.java))
             finishAffinity()
         }
 
+        //click button delete account
         binding.btnDelete.setOnClickListener {
             MyApplication.client.unregisterAndDeleteAccount()
             updateView()
         }
 
+        //click button add account
         binding.btnAddAccount1.setOnClickListener {
             MyApplication.client.startClient()
         }
 
+        //click button select hotline
         binding.btnSelectHotline.setOnClickListener {
+            //lấy list hotline
             CoroutineScope(Dispatchers.IO).launch {
                 runBlocking {
                     val list = MyApplication.client.getListHotline()
@@ -99,7 +116,7 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
             }
         }
 
-
+        //click button call
         binding.btnCall.setOnClickListener {
             if (hasPermission(this, Manifest.permission.RECORD_AUDIO) && hasPermission(
                     this, Manifest.permission.READ_PHONE_STATE
@@ -108,11 +125,12 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
                 val hotline = binding.etHotline.text.toString().trim()
                 val to = binding.etNumber.text.toString().trim()
                 Log.d("LogApp", to)
-
+                //tạo call đi
                 if (to.isNotEmpty()) {
                     MyApplication.client.addOutgoingCall(hotline, to)
                 }
             } else {
+                //check quyền
                 requestPermissions(
                     arrayOf(
                         Manifest.permission.RECORD_AUDIO,
@@ -124,6 +142,7 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
 
         updateView()
 
+        //check quyền hiển thị trên ứng dụng khác
         if (!Settings.canDrawOverlays(this)) {
             if (isMiuiWithApi28OrMore()) {
                 goToXiaomiPermissions(this)
@@ -145,6 +164,7 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
 
     override fun onDestroy() {
         super.onDestroy()
+        //xoá listener
         MyApplication.client.removeListener(listener)
     }
 
@@ -158,6 +178,7 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
         if (requestCode == 1) {
             val hotline = binding.etHotline.text.toString().trim()
             val to = binding.etNumber.text.toString().trim()
@@ -210,6 +231,7 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
     }
 
     override fun onClickHotline(hotline: Hotline) {
+        //set số hotline
         binding.etHotline.setText(hotline.phoneNumber)
     }
 }
