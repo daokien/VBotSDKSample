@@ -29,7 +29,7 @@ class CallActivity : AppCompatActivity() {
             MyApplication.state = state
             when (state) {
                 CallState.Incoming -> {
-
+                    Log.d("jshdjs", state.name)
                     micUpdate(ismic)
                 }
 
@@ -65,7 +65,7 @@ class CallActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
-        }else{
+        } else {
             window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
             window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
         }
@@ -104,9 +104,9 @@ class CallActivity : AppCompatActivity() {
                                 binding.tvStatus.post {
                                     binding.tvStatus.text = "Đang kết nối"
                                 }
-                                Log.d("hsjdhs","Đang kết nối")
+                                Log.d("hsjdhs", "Đang kết nối")
                             } else {
-                                Log.d("hsjdhs","answerIncomingCall")
+                                Log.d("hsjdhs", "answerIncomingCall")
                                 MyApplication.client.answerIncomingCall()
                                 break
                             }
