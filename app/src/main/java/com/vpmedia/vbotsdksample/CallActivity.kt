@@ -5,6 +5,8 @@ import android.content.Context
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
@@ -34,7 +36,7 @@ class CallActivity : AppCompatActivity() {
                 }
 
                 CallState.Connecting -> {
-                    MyApplication.client.checkAndStopLocalRingBackTone()
+                    MyApplication.client.stopRinging()
                     if (isIncoming) {
                         speakUpdate(false)
                     }
@@ -85,7 +87,7 @@ class CallActivity : AppCompatActivity() {
         }
         //click button answer
         binding.btnAnswer.setOnClickListener {
-            MyApplication.client.checkAndStopLocalRingBackTone()
+            MyApplication.client.stopRinging()
             bAnswer = true
             binding.llIncoming.visibility = View.GONE
             binding.btnHangUp.visibility = View.VISIBLE
@@ -165,7 +167,7 @@ class CallActivity : AppCompatActivity() {
     //update mic
     private fun micUpdate(enable: Boolean) {
         ismic = enable
-        MyApplication.client.isMic(ismic)
+        MyApplication.client.setMute(ismic)
         binding.btnMic.text = "Mic: $ismic"
     }
 
@@ -202,7 +204,7 @@ class CallActivity : AppCompatActivity() {
     //tắt màn hình call
     private fun destroy() {
         bAnswer = false
-        MyApplication.client.checkAndStopLocalRingBackTone()
+        MyApplication.client.stopRinging()
         binding.cTime.stop()
         MyApplication.client.removeListener(listener)
         finish()
