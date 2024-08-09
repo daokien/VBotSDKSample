@@ -16,7 +16,7 @@
         android:hint="Token"
         android:importantForAutofill="yes"
         android:inputType="textMultiLine"
-        android:text="" />
+        android:text="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJWYWx1ZSI6IjU0ODctNDU2OS0xNTctMjM1In0.E69BgDIM1qEm5GRXeyAsRuN692al_4Vj_I895VV65XE" />
 
     <Button
         android:id="@+id/btnLogin"

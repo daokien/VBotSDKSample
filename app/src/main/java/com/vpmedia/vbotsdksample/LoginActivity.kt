@@ -43,12 +43,12 @@ class LoginActivity : AppCompatActivity() {
 
                 else -> {
                     binding.tvStatus.text = "Loading"
-                    MyApplication.client.registerAccount(token, MyApplication.tokenFirebase)
+                    MyApplication.client.connect(token, MyApplication.tokenFirebase)
                 }
             }
         }
         //start vbot client
-        MyApplication.client.startClient()
+        MyApplication.client.setup()
     }
 
     override fun onDestroy() {

@@ -8,6 +8,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -70,22 +72,12 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
         //add listener
         MyApplication.client.addListener(listener)
 
-        //click button stop client
-        binding.btnStop.setOnClickListener {
-            ////stop client và unregister account
-            MyApplication.client.stopClient()
-            //đóng ứng dụng
-            finishAffinity()
-        }
-
         //click button logout
         binding.btnLogout.setOnClickListener {
-            MyApplication.client.stopClient()
-            //logout
-            MyApplication.client.logout()
+            MyApplication.client.disconnect()
             //bật màn hình login
-            startActivity(Intent(this, LoginActivity::class.java))
-            finishAffinity()
+//            startActivity(Intent(this, LoginActivity::class.java))
+//            finishAffinity()
         }
 
         //click button delete account
@@ -96,16 +88,21 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
 
         //click button add account
         binding.btnAddAccount1.setOnClickListener {
-            MyApplication.client.startClient()
+            MyApplication.client.setup()
         }
+
+        binding.btnConnect.setOnClickListener {
+            MyApplication.client.connect(binding.etToken.text.toString(), MyApplication.tokenFirebase)
+        }
+
 
         //click button select hotline
         binding.btnSelectHotline.setOnClickListener {
             //lấy list hotline
             CoroutineScope(Dispatchers.IO).launch {
                 runBlocking {
-                    val list = MyApplication.client.getListHotline()
-                    if (list!=null){
+                    val list = MyApplication.client.getHotlines()
+                    if (list != null) {
                         val chooseHotlineCallBottomSheet = ChooseHotline()
                         chooseHotlineCallBottomSheet.show(
                             supportFragmentManager, "chooseHotlineCallBottomSheet"
@@ -118,6 +115,10 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
 
         //click button call
         binding.btnCall.setOnClickListener {
+            binding.btnCall.isEnabled = false
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.btnCall.isEnabled = true
+            }, 1000)
             if (hasPermission(this, Manifest.permission.RECORD_AUDIO) && hasPermission(
                     this, Manifest.permission.READ_PHONE_STATE
                 )
@@ -127,7 +128,7 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
                 Log.d("LogApp", to)
                 //tạo call đi
                 if (to.isNotEmpty()) {
-                    MyApplication.client.addOutgoingCall(hotline, to)
+                    MyApplication.client.startCall(hotline, to)
                 }
             } else {
                 //check quyền
@@ -184,7 +185,7 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
             val to = binding.etNumber.text.toString().trim()
             if (to.isNotEmpty()) {
                 runOnUiThread {
-                    MyApplication.client.addOutgoingCall(hotline, to)
+                    MyApplication.client.startCall(hotline, to)
                 }
             }
         }

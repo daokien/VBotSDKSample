@@ -22,7 +22,7 @@ class MyApplication : Application() {
 
         //Khởi tạo VBotClient
         fun initClient(context: Context) {
-            if (clientExists() && client.clientIsStart()) {
+            if (clientExists() && client.isSetup()) {
                 Log.d("LogApp", "Skipping Client creation")
                 return
             }

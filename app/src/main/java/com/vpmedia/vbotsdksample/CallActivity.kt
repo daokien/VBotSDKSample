@@ -5,8 +5,6 @@ import android.content.Context
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
@@ -72,7 +70,7 @@ class CallActivity : AppCompatActivity() {
             window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
         }
         MyApplication.initClient(this)
-        MyApplication.client.startClient()
+        MyApplication.client.setup()
         MyApplication.client.addListener(listener)
 
         //click button mic
@@ -92,7 +90,7 @@ class CallActivity : AppCompatActivity() {
             binding.llIncoming.visibility = View.GONE
             binding.btnHangUp.visibility = View.VISIBLE
             if (MyApplication.client.isCall()) {
-                MyApplication.client.answerIncomingCall()
+                MyApplication.client.answerCall()
             } else {
                 //chưa có call -> chờ có call để kết nối
                 Thread {
@@ -109,7 +107,7 @@ class CallActivity : AppCompatActivity() {
                                 Log.d("hsjdhs", "Đang kết nối")
                             } else {
                                 Log.d("hsjdhs", "answerIncomingCall")
-                                MyApplication.client.answerIncomingCall()
+                                MyApplication.client.answerCall()
                                 break
                             }
                         }
@@ -122,7 +120,7 @@ class CallActivity : AppCompatActivity() {
         //click button hold
         binding.btnHold.setOnClickListener {
             hold = !hold
-            MyApplication.client.setHold(hold)
+            MyApplication.client.holdCall(hold)
         }
         //click button decline
         binding.btnDecline.setOnClickListener {
@@ -130,14 +128,14 @@ class CallActivity : AppCompatActivity() {
         }
         //click button hangup
         binding.btnHangUp.setOnClickListener {
-            MyApplication.client.hangupCall()
+            MyApplication.client.endCall()
         }
 
         //khởi tạo audio manager
         audioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         if (MyApplication.state == CallState.Outgoing) {
-            binding.tvName.text = MyApplication.client.getRemoteAddressCall()
+            binding.tvName.text = MyApplication.client.callName()
             binding.btnHangUp.visibility = View.VISIBLE
             binding.llIncoming.visibility = View.GONE
             speak = false
@@ -167,14 +165,14 @@ class CallActivity : AppCompatActivity() {
     //update mic
     private fun micUpdate(enable: Boolean) {
         ismic = enable
-        MyApplication.client.setMute(ismic)
+        MyApplication.client.muteCall(ismic)
         binding.btnMic.text = "Mic: $ismic"
     }
 
     //update speak
     private fun speakUpdate(enable: Boolean) {
         speak = enable
-        isSpeak(enable)
+        MyApplication.client.onOffSpeaker(enable)
         binding.btnSpeak.text = "Speak: $speak"
     }
 
