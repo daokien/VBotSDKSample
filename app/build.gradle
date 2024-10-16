@@ -50,10 +50,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
 }
 
 dependencies {
+    implementation files('libs/VBot-Android-SDK.aar')
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -64,14 +64,12 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     implementation 'com.github.andrefrsousa:SuperBottomSheet:2.0.0'
-//    implementation files('libs/VBot-Android-SDK.aar')
-    implementation 'com.github.VBotDevTeam:VBot_SDK_Android:1.0.1'
+//    implementation 'com.github.VBotDevTeam:VBot_SDK_Android:1.0.4'
     implementation platform('com.google.firebase:firebase-bom:32.4.0')
     implementation 'com.google.firebase:firebase-messaging-ktx:23.3.1'
+//    implementation files('libs/SDKVBot-release.aar')
 
 
-
-//    implementation files('libs/SDKVBot-debug.aar')
 //    api fileTree(dir: 'libs', include: ['*.aar'])
 
 }

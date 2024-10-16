@@ -15,6 +15,9 @@ class MyApplication : Application() {
         var state: CallState = CallState.Null
         lateinit var tokenFirebase: String
 
+        @SuppressLint("StaticFieldLeak")
+        lateinit var callManager: CallManager
+
         // kiểm tra khởi tạo VBotClient
         fun clientExists(): Boolean {
             return ::client.isInitialized
@@ -28,6 +31,17 @@ class MyApplication : Application() {
             }
             Log.d("LogApp", "startClient")
             client = VBotClient(context)
+        }
+
+        fun initCallManager(context: Context, hashMap: HashMap<String, String>) {
+            if (callManagerExists()) {
+                return
+            }
+            callManager = CallManager(context, hashMap)
+        }
+
+        fun callManagerExists(): Boolean {
+            return ::callManager.isInitialized
         }
     }
 

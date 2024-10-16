@@ -18,10 +18,13 @@ class LoginActivity : AppCompatActivity() {
         override fun onAccountRegistrationState(status: AccountRegistrationState, reason: String) {
             loginState(status)
         }
+
         //Lắng nghe lỗi
         override fun onErrorCode(erCode: Int, message: String) {
             super.onErrorCode(erCode, message)
-            binding.tvStatus.text = "Error: $erCode -- $message"
+            runOnUiThread {
+                binding.tvStatus.text = "Error: $erCode -- $message"
+            }
         }
     }
 
@@ -66,7 +69,6 @@ class LoginActivity : AppCompatActivity() {
 
         when (state) {
             AccountRegistrationState.Ok -> {
-                binding.tvStatus.text = "Done"
                 MyApplication.client.removeListener(listener)
                 //chuyển màn hình main
                 startActivity(Intent(this, MainActivity::class.java))

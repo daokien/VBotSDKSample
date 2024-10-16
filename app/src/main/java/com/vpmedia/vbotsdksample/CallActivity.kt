@@ -16,7 +16,6 @@ import com.vpmedia.vbotsdksample.databinding.ActivityCallBinding
 
 class CallActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCallBinding
-    private var isIncoming = false
     private var ismic = true
     private var speak = false
     private var audioManager: AudioManager? = null
@@ -35,9 +34,7 @@ class CallActivity : AppCompatActivity() {
 
                 CallState.Connecting -> {
                     MyApplication.client.stopRinging()
-                    if (isIncoming) {
-                        speakUpdate(false)
-                    }
+                    speakUpdate(false)
                     binding.llIncoming.visibility = View.GONE
                     binding.btnHangUp.visibility = View.VISIBLE
                     binding.tvStatus.text = MyApplication.state.toString()
@@ -70,7 +67,9 @@ class CallActivity : AppCompatActivity() {
             window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
         }
         MyApplication.initClient(this)
-        MyApplication.client.setup()
+        if (!MyApplication.client.isSetup()) {
+            MyApplication.client.setup()
+        }
         MyApplication.client.addListener(listener)
 
         //click button mic
@@ -133,27 +132,43 @@ class CallActivity : AppCompatActivity() {
 
         //khởi tạo audio manager
         audioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-        if (MyApplication.state == CallState.Outgoing) {
-            binding.tvName.text = MyApplication.client.callName()
-            binding.btnHangUp.visibility = View.VISIBLE
-            binding.llIncoming.visibility = View.GONE
-            speak = false
-            micUpdate(ismic)
-        } else {
-            val transId = intent.getStringExtra("transId").toString()
-            val hotlineName = intent.getStringExtra("hotlineName")
-            val name = intent.getStringExtra("name").toString()
-            MyApplication.client.addIncomingCall(transId)
-            binding.tvName.text = name
-            isIncoming = true
-            if (hotlineName != null) {
-                binding.tvHotline.text = "Hotline: $hotlineName"
+        val hotlineName = intent.getStringExtra("hotlineName")
+        var name = intent.getStringExtra("name").toString()
+        if (hotlineName != null) {
+            binding.tvHotline.text = "Hotline: $hotlineName"
+        }
+        if (name.isEmpty()) {
+            name = MyApplication.client.callName().toString()
+        }
+        binding.tvName.text = name
+        when (MyApplication.state) {
+            CallState.Incoming -> {
+                binding.btnHangUp.visibility = View.GONE
+                binding.llIncoming.visibility = View.VISIBLE
+                speak = true
+                MyApplication.client.startRinging()
             }
-            binding.btnHangUp.visibility = View.GONE
-            binding.llIncoming.visibility = View.VISIBLE
-            speak = true
-            MyApplication.client.startRinging()
+
+            CallState.Calling -> {
+                binding.btnHangUp.visibility = View.VISIBLE
+                binding.llIncoming.visibility = View.GONE
+                speak = false
+                micUpdate(ismic)
+            }
+
+            CallState.Connecting, CallState.Confirmed -> {
+                MyApplication.client.stopRinging()
+                speakUpdate(false)
+                binding.llIncoming.visibility = View.GONE
+                binding.btnHangUp.visibility = View.VISIBLE
+                binding.tvStatus.text = MyApplication.state.toString()
+                startTime()
+                micUpdate(ismic)
+            }
+
+            else -> {
+
+            }
         }
 
         speakUpdate(speak)

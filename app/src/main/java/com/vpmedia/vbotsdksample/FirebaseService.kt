@@ -12,12 +12,10 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.vpmedia.sdkvbot.en.CallState
 import kotlin.random.Random
 
 
 class FirebaseService : FirebaseMessagingService() {
-
 
     //nhận notify
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -37,25 +35,12 @@ class FirebaseService : FirebaseMessagingService() {
             try {
                 when (type) {
                     "3" -> {
-                        val offCall = hashMap["offCall"]
-                        val transId = hashMap["transId"].toString()
-                        val hotlineName = hashMap["hotlineName"].toString()
-                        val name = hashMap["name"].toString()
-                        if (offCall != null) {
-                            if (offCall == "0") {
-                                //call incoming
-                                MyApplication.state = CallState.Incoming
-                                val intent = Intent(this, CallActivity::class.java)
-                                intent.flags =
-                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_TASK_ON_HOME or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                intent.putExtra("transId",transId)
-                                intent.putExtra("hotlineName",hotlineName)
-                                intent.putExtra("name",name)
-                                startActivity(intent)
-                            } else if (offCall == "1") {
-                                //end call
-                                MyApplication.client.endCall()
-                            }
+                        val offCall = hashMap["offCall"].toString()
+                        if (offCall == "0") {
+                            MyApplication.initCallManager(this, hashMap)
+                            MyApplication.callManager.incomingCall()
+                        } else {
+                            MyApplication.client.notificationCall(map = hashMap)
                         }
                     }
                 }
@@ -85,10 +70,7 @@ class FirebaseService : FirebaseMessagingService() {
             NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_va_logo_notification)
                 .setLargeIcon(
-                    BitmapFactory.decodeResource(
-                        resources,
-                        R.drawable.ic_va_logo_notification
-                    )
+                    BitmapFactory.decodeResource(resources, R.drawable.ic_va_logo_notification)
                 )
                 .setContentTitle(title)
                 .setContentText(message)

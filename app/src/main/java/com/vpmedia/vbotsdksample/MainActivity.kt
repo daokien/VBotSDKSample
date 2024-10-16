@@ -39,13 +39,14 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
 
         //Lắng nghe trạng thái cuộc gọi
         override fun onCallState(state: CallState) {
+            Log.d("LogApp", "onCallState: $state")
             //call đến mở màn hình call
-            if (state == CallState.Outgoing) {
+            if (state == CallState.Calling) {
                 MyApplication.state = state
                 startActivity(
                     Intent(this@MainActivity, CallActivity::class.java).addFlags(
                         Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                    )
+                    ).putExtra("hotlineName", binding.etHotline.text.toString().trim())
                 )
             }
         }
@@ -53,11 +54,9 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
         //Lắng nghe lỗi
         override fun onErrorCode(erCode: Int, message: String) {
             super.onErrorCode(erCode, message)
-            Toast.makeText(
-                this@MainActivity,
-                "erCode=$erCode--message=$message",
-                Toast.LENGTH_SHORT
-            ).show()
+            runOnUiThread {
+                Toast.makeText(this@MainActivity, "erCode=$erCode--message=$message", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }
@@ -155,6 +154,17 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
                 @Suppress("DEPRECATION")
                 startActivityForResult(intent, 23052)
             }
+        }
+
+        if (hasPermission(this, Manifest.permission.RECORD_AUDIO) && hasPermission(this, Manifest.permission.READ_PHONE_STATE)) {
+
+        }else{
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.READ_PHONE_STATE
+                ), 1
+            )
         }
     }
 
