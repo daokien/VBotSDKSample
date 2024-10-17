@@ -34,7 +34,9 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
     private var listener = object : ClientListener() {
         //Lắng nghe trạng thái Account register
         override fun onAccountRegistrationState(status: AccountRegistrationState, reason: String) {
-            updateView()
+            runOnUiThread {
+                updateView()
+            }
         }
 
         //Lắng nghe trạng thái cuộc gọi
