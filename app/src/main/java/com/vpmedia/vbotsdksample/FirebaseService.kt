@@ -40,7 +40,12 @@ class FirebaseService : FirebaseMessagingService() {
                             MyApplication.initCallManager(this, hashMap)
                             MyApplication.callManager.incomingCall()
                         } else {
-                            MyApplication.client.notificationCall(map = hashMap)
+                            try {
+                                if (MyApplication.clientExists())
+                                    MyApplication.client.notificationCall(map = hashMap)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
                         }
                     }
                 }
