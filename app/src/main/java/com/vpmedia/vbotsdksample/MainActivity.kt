@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
                 startActivity(
                     Intent(this@MainActivity, CallActivity::class.java).addFlags(
                         Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                    ).putExtra("hotlineName", binding.etHotline.text.toString().trim())
+                    ).putExtra("hotlineName", binding.etHotline.text.toString().trim()).putExtra("name", binding.etNumber.text.toString())
                 )
             }
         }
@@ -81,16 +81,10 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
 //            finishAffinity()
         }
 
-        //click button delete account
-        binding.btnDelete.setOnClickListener {
-            MyApplication.client.unregisterAndDeleteAccount()
-            updateView()
-        }
-
         //click button add account
-        binding.btnAddAccount1.setOnClickListener {
-            MyApplication.client.setup()
-        }
+//        binding.btnAddAccount1.setOnClickListener {
+//            MyApplication.client.setup()
+//        }
 
         binding.btnConnect.setOnClickListener {
             MyApplication.client.connect(binding.etToken.text.toString(), MyApplication.tokenFirebase)
@@ -160,7 +154,7 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
 
         if (hasPermission(this, Manifest.permission.RECORD_AUDIO) && hasPermission(this, Manifest.permission.READ_PHONE_STATE)) {
 
-        }else{
+        } else {
             requestPermissions(
                 arrayOf(
                     Manifest.permission.RECORD_AUDIO,
@@ -170,9 +164,15 @@ class MainActivity : AppCompatActivity(), ChooseHotline.ListenerBottomSheet {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateView() {
         binding.tvStatus.text = "State: ${MyApplication.client.getStateAccount()}"
-        binding.tvName.text = "Name: ${MyApplication.client.getAccountUsername()}"
+        val name = MyApplication.client.getAccountUsername()
+        binding.tvName.text = if (!name.isNullOrEmpty()) {
+            "Name: ${name.split(" ")[0]}"
+        } else {
+            "Name: Không có thông tin"
+        }
     }
 
     override fun onDestroy() {

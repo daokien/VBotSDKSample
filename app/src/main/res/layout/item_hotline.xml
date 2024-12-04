@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
         android:gravity="center"
-        android:background="@color/bg"
-        android:padding="10dp"
+        android:background="@drawable/bg_bg_10"
+        android:padding="15dp"
         android:textColor="@color/black"
         android:textSize="17sp" />
 </LinearLayout>
