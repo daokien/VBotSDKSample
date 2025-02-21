@@ -25,28 +25,30 @@ class CallActivity : AppCompatActivity() {
     private var listener = object : ClientListener() {
         //lắng nghe trạng thái cuộc gọi
         override fun onCallState(state: CallState) {
-            MyApplication.state = state
-            when (state) {
-                CallState.Incoming -> {
-                    Log.d("jshdjs", state.name)
-                    micUpdate(ismic)
-                }
+            runOnUiThread {
+                MyApplication.state = state
+                when (state) {
+                    CallState.Incoming -> {
+                        Log.d("jshdjs", state.name)
+                        micUpdate(ismic)
+                    }
 
-                CallState.Connecting -> {
-                    MyApplication.client.stopRinging()
-                    speakUpdate(false)
-                    binding.llIncoming.visibility = View.GONE
-                    binding.btnHangUp.visibility = View.VISIBLE
-                    binding.tvStatus.text = MyApplication.state.toString()
-                    startTime()
-                }
+                    CallState.Connecting -> {
+                        MyApplication.client.stopRinging()
+                        speakUpdate(false)
+                        binding.llIncoming.visibility = View.GONE
+                        binding.btnHangUp.visibility = View.VISIBLE
+                        binding.tvStatus.text = MyApplication.state.toString()
+                        startTime()
+                    }
 
-                CallState.Disconnected -> {
-                    destroy()
-                }
+                    CallState.Disconnected -> {
+                        destroy()
+                    }
 
-                else -> {
+                    else -> {
 
+                    }
                 }
             }
         }
@@ -117,10 +119,10 @@ class CallActivity : AppCompatActivity() {
             }
         }
         //click button hold
-        binding.btnHold.setOnClickListener {
-            hold = !hold
-            MyApplication.client.holdCall(hold)
-        }
+//        binding.btnHold.setOnClickListener {
+//            hold = !hold
+//            MyApplication.client.holdCall(hold)
+//        }
         //click button decline
         binding.btnDecline.setOnClickListener {
             MyApplication.client.declineIncomingCall(true)
@@ -133,12 +135,12 @@ class CallActivity : AppCompatActivity() {
         //khởi tạo audio manager
         audioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val hotlineName = intent.getStringExtra("hotlineName")
-        var name = intent.getStringExtra("name").toString()
+        var name = intent.getStringExtra("name") ?: ""
         if (hotlineName != null) {
             binding.tvHotline.text = "Hotline: $hotlineName"
         }
         if (name.isEmpty()) {
-            name = MyApplication.client.callName().toString()
+            name = MyApplication.client.callName() ?: ""
         }
         binding.tvName.text = name
         when (MyApplication.state) {

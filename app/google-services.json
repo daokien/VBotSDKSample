@@ -2,9 +2,28 @@
   "project_info": {
     "project_number": "905472713026",
     "project_id": "vbotsdk",
-    "storage_bucket": "vbotsdk.appspot.com"
+    "storage_bucket": "vbotsdk.firebasestorage.app"
   },
   "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905472713026:android:67ef2a54d73395ac4be8db",
+        "android_client_info": {
+          "package_name": "com.vpmedia.vbotchatsdk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4TEsVNlOx_X2UV1ss7p4fq4MmCdM0N2U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:905472713026:android:cda615b64d9987134be8db",

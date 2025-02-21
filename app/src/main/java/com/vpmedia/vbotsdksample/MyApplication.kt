@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.messaging.FirebaseMessaging
 import com.vpmedia.sdkvbot.client.VBotClient
 import com.vpmedia.sdkvbot.en.CallState
@@ -49,6 +50,9 @@ class MyApplication : Application() {
         super.onCreate()
         //Lấy firebase Token
         getTokenFirebase()
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
     }
 
     private fun getTokenFirebase() {

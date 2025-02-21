@@ -51,6 +51,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
         android:orientation="horizontal">
 
         <Button
@@ -59,7 +60,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:text="Mic" />
+            android:background="@drawable/bg_white_10_s_black"
+            android:text="Mic"
+            android:textAllCaps="false"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/btnSpeak"
@@ -67,15 +71,18 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:text="Speak" />
+            android:background="@drawable/bg_white_10_s_black"
+            android:text="Speak"
+            android:textAllCaps="false"
+            android:textColor="@color/black" />
 
-        <Button
-            android:id="@+id/btnHold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:text="Hold" />
+        <!--        <Button-->
+        <!--            android:id="@+id/btnHold"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_margin="10dp"-->
+        <!--            android:layout_weight="1"-->
+        <!--            android:text="Hold" />-->
     </LinearLayout>
 
     <LinearLayout
@@ -91,9 +98,12 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:layout_weight="1"
-            android:background="@color/green"
+            android:background="@drawable/bg_main_10"
             android:text="Answer"
-            android:textColor="@color/white" />
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+
+            android:textSize="17sp" />
 
         <Button
             android:id="@+id/btnDecline"
@@ -101,9 +111,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:layout_weight="1"
-            android:background="@color/red"
+            android:background="@drawable/bg_red"
             android:text="Decline"
-            android:textColor="@color/white" />
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
     </LinearLayout>
 
     <Button
@@ -112,8 +124,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="20dp"
-        android:background="@color/red"
+        android:background="@drawable/bg_red"
         android:text="Decline"
+        android:textAllCaps="false"
         android:textColor="@color/white"
+        android:textSize="17sp"
         android:visibility="gone" />
 </LinearLayout>
